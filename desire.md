@@ -1,6 +1,6 @@
 
 ```js
-fetch()
+  fetch()
 ```
 
 ### 现在作为get请求的url拼接有三种方法
@@ -38,7 +38,7 @@ fetch()
   },
 ```
 
-**综合比较一些，从第二种和第三种里面取其一**\
+**综合比较一些，从第二种和第三种里面取其一**
 
 
 ## 整体思路
@@ -47,12 +47,12 @@ fetch()
 ## 这些请求参数分为三类
 
 **第一类 任何http请求都会有的**
-url, method, headers, body, 
+url, method, headers, body
 
 **第二类 fetch方法独有的**
 credentials, catch, mode
 
-**第三类 自行封装的一些方法，（这类参数可暂时不写）**
+**第三类（此类不算请求参数） 自行封装的一些方法，（这类参数可暂时不写）**
 suffix, baseURL, transformRequest, transformResponse, validateStatus
 
 

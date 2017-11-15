@@ -25,8 +25,11 @@ easy.request({
   baseURL: 'http://example.con',
   url: 'api/v1'，
   method: 'get'，
-  header: 'sss',
-  params: {}
+  headers: {
+    'ssadf':'asdfa'
+  },
+  params: {},
+  
 })
 
 ```

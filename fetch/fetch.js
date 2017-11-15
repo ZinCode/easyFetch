@@ -75,10 +75,7 @@ class Easyfetch {
    */
   __defaultRequest(config) {
     // 合并自身默认参数,这里写的不是太好
-    const defaults = Object.assign(
-      this.defaults,
-      config
-    )
+    const defaults = Object.assign(this.defaults, config)
 
     const { baseURL, header, validateStatus, ...rest } = defaults
 
@@ -86,8 +83,8 @@ class Easyfetch {
     const $$config = {
       url: defaults.url,
       body: defaults.params,
-      header: defaults.header,
-      fetchConfig: defaults.fetchConfig
+      headers: defaults.headers,
+      ...fetchConfig
     }
 
     // 配置请求路径 baseURL
@@ -96,9 +93,5 @@ class Easyfetch {
     }
 
     // 发起HTTP请求
-    const
   }
 }
-
-
-
