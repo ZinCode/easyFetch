@@ -1,19 +1,18 @@
-import Utils from './utils'
+import Utils from './utils';
+// import default from '../otherfetch/fetch1';
 class Easyfetch {
   constructor(defaults) {
-    Object.assign(this, {
-      defaults
-    })
-    this.__init()
+    this.defaults = defaults;
+    this.__init();
   }
 
   /**
     * 初始化
     */
   __init() {
-    this.__initInterceptor()
-    this.__initDefault()
-    this.__initMethods()
+    this.__initInterceptor();
+    this.__initDefault();
+    this.__initMethods();
   }
 
   /**
@@ -22,8 +21,8 @@ class Easyfetch {
   __initInterceptor() {}
 
   /**
-     * 初始化默认参数
-     */
+    * 初始化默认参数
+    */
   __initDefaults() {
     const defaults = {
       // 基础请求路径
@@ -37,6 +36,7 @@ class Easyfetch {
       },
       method: 'get',
       body: {},
+
       /* fetch专有参数 */
       mode: 'cors',
       catch: 'force-cache',
@@ -44,65 +44,49 @@ class Easyfetch {
 
       /* 额外参数 */
       // 验证返回状态码
-      validateStatus: status => status >= 200 && status < 300,
+      validateStatus: status => status === 304 || (status >= 200 && status < 300),
       suffix: ''
-    }
+    };
 
     // 合并参数
-    this.defaults = Object.assign({}, defaults, this.defaults)
+    this.defaults = Object.assign({}, defaults, this.defaults);
   }
 
   /**
      * 遍历对象构造方法,
      */
   __initMethods() {
-    const methods = ['options', 'get', 'head', 'post', 'put', 'delete', 'trace', 'connect']
     methods.forEach(method => {
-      this[method] = (url, params, config) => {
-        // 合并参数
-        return this.__defaultRequest(
-          Object.assign({}, config, {
-            url,
-            method,
-            params
-          })
-        )
-      }
-    })
+      this[method] = (url, body, config) => {
+        return this.__defaultRequest(object.assign(this.defaults, config, { url, body }));
+      };
+    });
 
     // request - 基础请求方法
-    this.request = (...args) => this.__defaultRequest(...args)
+    this.request = (...args) => this.__defaultRequest(...args);
 
     // Promise.all - 合并处理请求
-    this.all = promises => Promise.all(promises)
+    this.all = promises => Promise.all(promises);
   }
 
   /**
    * 以fetch作为底层方法
    */
   __defaultRequest(config) {
-    // 合并自身默认参数,这里写的不是太好
-    const defaults = Object.assign(this.defaults, config)
-
-    const { baseURL, headers, validateStatus, ...rest } = defaults
-
-    // 配置请求参数
     const $$config = {
-      url: defaults.url,
-      body: defaults.params,
-      headers: defaults.headers,
-      ...fetchConfig
-    }
-    // 将方法小写
-    $$config.method = config.method.toLowerCase()
+      header: config.header,
+      method: config.method,
+      cache: config.cache,
+      mode: config.mode,
+      credentials: config.credentials
+    };
 
-    // 配置请求路径 baseURL
-    if (baseURL && !isAbsoluteURL($$(config.url))) {
-      $$config.url = Utils.combineURLs(baseURL, $$config.url)
+    // 在这里转换请求体
+    if (config.method === 'get') {
+      $$config.url = Utils.buildUrl(url, defaults.body);
+    } else {
+      $$config.body = defaults.body;
     }
-
-    // 如果他属于没有请求体的方法，那么
-    if (~['delete', 'get', 'head', 'options'].indexOf($$config.method)) {
-    }
+    return fetch(config.url, $$config);
   }
 }

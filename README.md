@@ -22,7 +22,7 @@ easy.request(config)
 
 // example
 easy.request({
-  baseURL: 'http://example.con',
+  baseURL: 'http://example.com',
   url: 'api/v1'，
   method: 'get'，
   headers: {
