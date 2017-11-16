@@ -1,0 +1,19 @@
+{
+  "name": "easyfetch",
+  "version": "0.0.1",
+  "description": "easyfetch",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/dielianguo_admin/easyFetch.git"
+  },
+  "keywords": ["fetch", "axios", "es6"],
+  "author": "jsm",
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^0.51.6"
+  }
+}

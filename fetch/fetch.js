@@ -90,3 +90,5 @@ class Easyfetch {
     return fetch(config.url, $$config);
   }
 }
+
+export default Easyfetch;

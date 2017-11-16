@@ -1,4 +1,4 @@
-const toString = Object.prototype.toString
+const toString = Object.prototype.toString;
 
 /**
  * 合并路径
@@ -9,8 +9,8 @@ const toString = Object.prototype.toString
 const combineURLs = (baseURL, relativeURL) => {
   return relativeURL
     ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
-    : baseURL
-}
+    : baseURL;
+};
 
 /**
  * 判断是否绝对路径
@@ -18,8 +18,8 @@ const combineURLs = (baseURL, relativeURL) => {
  * @returns {boolean} 返回真值表示绝对路径，假值表示非绝对路径
  */
 const isAbsoluteURL = url => {
-  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url)
-}
+  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
+};
 
 /**
  * 判断是否是数组
@@ -27,8 +27,8 @@ const isAbsoluteURL = url => {
  * @return {Boolean} true: 是数组，false: 不是数组
  */
 const isArray = value => {
-  return Array.isArray(value)
-}
+  return Array.isArray(value);
+};
 
 /**
  * 判断是否是对象
@@ -36,8 +36,8 @@ const isArray = value => {
  * @return {Boolean} true: 是对象, false: 不是对象
  */
 const isObject = value => {
-  return value !== null && typeof value === 'object'
-}
+  return value !== null && typeof value === 'object';
+};
 
 /**
  * 判断是否是数字
@@ -45,8 +45,8 @@ const isObject = value => {
  * @return {Boolean} true: 是数字， false: 不是数字
  */
 const isNumber = value => {
-  return typeof value === 'number'
-}
+  return typeof value === 'number';
+};
 
 /**
  * 判断是否是时间
@@ -54,8 +54,8 @@ const isNumber = value => {
  * @return {Boolean} true: 是时间， false: 不是时间
  */
 const isDate = value => {
-  return toString(value) === '[object Date]'
-}
+  return toString(value) === '[object Date]';
+};
 
 /**
  * 判断是否是未定义
@@ -63,8 +63,8 @@ const isDate = value => {
  * @return {Boolean} true: 是， false: 不是
  */
 const isUndefined = value => {
-  return typeof value === 'undefined'
-}
+  return typeof value === 'undefined';
+};
 
 /**
  * 将对象转换为 JSON 字符串
@@ -73,21 +73,21 @@ const isUndefined = value => {
  * @return {String} 转换后的JSON
  */
 const toJson = (obj, pretty) => {
-  if (isUndefined(obj)) return undefined
+  if (isUndefined(obj)) return undefined;
   if (!isNumber(pretty)) {
-    pretty = pretty ? 2 : null
+    pretty = pretty ? 2 : null;
   }
-  return JSON.stringify(obj, null, pretty)
-}
+  return JSON.stringify(obj, null, pretty);
+};
 
 /**
  * 序列化
  * @param {Object} value  序列化 
  */
 const serializeValue = value => {
-  if (isObject(value)) return isDate(value) ? value.toISOString() : toJSON(value)
-  return value
-}
+  if (isObject(value)) return isDate(value) ? value.toISOString() : toJSON(value);
+  return value;
+};
 
 const encodeUriQuery = (value, pctEncodeSpaces) => {
   return encodeURIComponent(value)
@@ -96,33 +96,33 @@ const encodeUriQuery = (value, pctEncodeSpaces) => {
     .replace(/%24/g, '$')
     .replace(/%2C/gi, ',')
     .replace(/%3B/gi, ';')
-    .replace(/%20/g, pctEncodeSpaces ? '%20' : '+')
-}
+    .replace(/%20/g, pctEncodeSpaces ? '%20' : '+');
+};
 
 const paramSerializer = obj => {
-  if (!obj) return ''
-  let parts = []
+  if (!obj) return '';
+  let parts = [];
   for (let key in obj) {
-    const value = obj[key]
-    if (value === null || isUndefined(value)) return
+    const value = obj[key];
+    if (value === null || isUndefined(value)) return;
     if (isArray(value)) {
       value.forEach(v => {
-        parts.push(encodeUriQuery(key) + '=' + encodeUriQuery(serializeValue(v)))
-      })
+        parts.push(encodeUriQuery(key) + '=' + encodeUriQuery(serializeValue(v)));
+      });
     } else {
-      parts.push(encodeUriQuery(key) + '=' + encodeUriQuery(serializeValue(value)))
+      parts.push(encodeUriQuery(key) + '=' + encodeUriQuery(serializeValue(value)));
     }
   }
-  return parts.join('&')
-}
+  return parts.join('&');
+};
 
 const buildUrl = (url, obj) => {
-  const serializedParams = paramSerializer(obj)
+  const serializedParams = paramSerializer(obj);
   if (serializedParams.length > 0) {
-    url += (url.indexOf('?') == -1 ? '?' : '&') + serializedParams
+    url += (url.indexOf('?') == -1 ? '?' : '&') + serializedParams;
   }
-  return url
-}
+  return url;
+};
 
 export default {
   combineURLs,
@@ -137,4 +137,4 @@ export default {
   encodeUriQuery,
   paramSerializer,
   buildUrl
-}
+};
