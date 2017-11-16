@@ -35,10 +35,17 @@ class Easyfetch {
         Accept: 'application/json, text/plain, */*',
         'Content-Type': 'application/x-www-form-urlencoded'
       },
+      method: 'get',
+      body: {},
+      /* fetch专有参数 */
       mode: 'cors',
       catch: 'force-cache',
-      method: 'get',
-      params: {}
+      credentials: 'include',
+
+      /* 额外参数 */
+      // 验证返回状态码
+      validateStatus: status => status >= 200 && status < 300,
+      suffix: ''
     }
 
     // 合并参数
@@ -77,7 +84,7 @@ class Easyfetch {
     // 合并自身默认参数,这里写的不是太好
     const defaults = Object.assign(this.defaults, config)
 
-    const { baseURL, header, validateStatus, ...rest } = defaults
+    const { baseURL, headers, validateStatus, ...rest } = defaults
 
     // 配置请求参数
     const $$config = {
@@ -86,12 +93,16 @@ class Easyfetch {
       headers: defaults.headers,
       ...fetchConfig
     }
+    // 将方法小写
+    $$config.method = config.method.toLowerCase()
 
     // 配置请求路径 baseURL
     if (baseURL && !isAbsoluteURL($$(config.url))) {
       $$config.url = Utils.combineURLs(baseURL, $$config.url)
     }
 
-    // 发起HTTP请求
+    // 如果他属于没有请求体的方法，那么
+    if (~['delete', 'get', 'head', 'options'].indexOf($$config.method)) {
+    }
   }
 }
