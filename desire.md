@@ -3,44 +3,6 @@
   fetch()
 ```
 
-### 现在作为get请求的url拼接有三种方法
-
-1
-
-```js
-  if (type === 'GRT') {
-    let params = ''
-    for (let i in data) {
-      params += `${i} = ${data[i]}&`
-    }
-    if (params !== '') {
-      params = params.substr(0, params.lastIndexOf('&'))
-      url = `${url}?${params}`
-    }
-  }
-```
-
-2 这个是我自己写的, 得回家才能看到
-
-```js
-
-```
-
-3 skyvow 的
-
-```js
-  buildUrl(url, obj) {
-      const serializedParams = this.paramSerializer(obj)
-      if (serializedParams.length > 0) {
-          url += ((url.indexOf('?') == -1) ? '?' : '&') + serializedParams
-      }
-      return url
-  },
-```
-
-**综合比较一些，从第二种和第三种里面取其一**
-
-
 ## 整体思路
 
 
