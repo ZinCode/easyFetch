@@ -11,7 +11,7 @@ class Easyfetch {
     */
   __init() {
     this.__initInterceptor();
-    this.__initDefault();
+    this.__initDefaults();
     this.__initMethods();
   }
 
@@ -30,7 +30,7 @@ class Easyfetch {
       // 请求路径
       url: '',
       // 请求头
-      header: {
+      headers: {
         Accept: 'application/json, text/plain, */*',
         'Content-Type': 'application/x-www-form-urlencoded'
       },
@@ -38,7 +38,7 @@ class Easyfetch {
       body: {},
 
       /* fetch专有参数 */
-      mode: 'cors',
+      mode: 'same-origin',
       catch: 'force-cache',
       credentials: 'include',
 
@@ -56,9 +56,10 @@ class Easyfetch {
      * 遍历对象构造方法,
      */
   __initMethods() {
+    const methods = ['get', 'post', 'put', 'delete'];
     methods.forEach(method => {
-      this[method] = (url, body, config) => {
-        return this.__defaultRequest(object.assign(this.defaults, config, { url, body }));
+      this[method] = (url, body = {}, config) => {
+        return this.__defaultRequest(Object.assign({}, config, { url, body, method }));
       };
     });
 
@@ -73,22 +74,27 @@ class Easyfetch {
    * 以fetch作为底层方法
    */
   __defaultRequest(config) {
+    // 合并参数
+    const defaults = Object.assign({}, this.defaults, config);
+
     const $$config = {
-      header: config.header,
-      method: config.method,
-      cache: config.cache,
-      mode: config.mode,
-      credentials: config.credentials
+      url: defaults.url,
+      mode: defaults.mode,
+      cache: defaults.cache,
+      method: defaults.method,
+      headers: defaults.headers,
+      credentials: defaults.credentials
     };
 
     // 在这里转换请求体
+    // 随便改一个东西看看
     if (config.method === 'get') {
-      $$config.url = Utils.buildUrl(url, defaults.body);
+      $$config.url = Utils.buildUrl($$config.url, defaults.body);
     } else {
       $$config.body = defaults.body;
     }
-    return fetch(config.url, $$config);
+    return fetch($$config.url, $$config).then(res => res);
   }
 }
 
-export default Easyfetch;
+export default new Easyfetch();

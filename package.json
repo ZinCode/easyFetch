@@ -4,7 +4,7 @@
   "description": "easyfetch",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c -w"
   },
   "repository": {
     "type": "git",
@@ -14,6 +14,9 @@
   "author": "jsm",
   "license": "ISC",
   "devDependencies": {
-    "rollup": "^0.51.6"
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "rollup": "^0.51.6",
+    "rollup-plugin-babel": "^3.0.2"
   }
 }
