@@ -1,7 +1,7 @@
 import Utils from './utils';
-// import default from '../otherfetch/fetch1';
+
 class Easyfetch {
-  constructor(defaults) {
+  constructor(defaults = {}) {
     this.defaults = defaults;
     this.__init();
   }
@@ -38,28 +38,28 @@ class Easyfetch {
       body: {},
 
       /* fetch专有参数 */
-      mode: 'same-origin',
-      catch: 'force-cache',
-      credentials: 'include',
+      mode: 'cors',
+      catch: 'default',
+      credentials: 'same-origin',
 
       /* 额外参数 */
       // 验证返回状态码
       validateStatus: status => status === 304 || (status >= 200 && status < 300),
       suffix: ''
     };
-
     // 合并参数
     this.defaults = Object.assign({}, defaults, this.defaults);
   }
 
   /**
-     * 遍历对象构造方法,
-     */
+   * 遍历对象构造方法,
+   */
   __initMethods() {
     const methods = ['get', 'post', 'put', 'delete'];
     methods.forEach(method => {
       this[method] = (url, body = {}, config) => {
         return this.__defaultRequest(Object.assign({}, config, { url, body, method }));
+        // return this.__defaultRequest({ ...config, url, body, method });
       };
     });
 
@@ -75,8 +75,10 @@ class Easyfetch {
    */
   __defaultRequest(config) {
     // 合并参数
+    // const defaults = { ...this.defautls, ...config };
     const defaults = Object.assign({}, this.defaults, config);
 
+    // 下面这里也要改一改
     const $$config = {
       url: defaults.url,
       mode: defaults.mode,
@@ -86,6 +88,11 @@ class Easyfetch {
       credentials: defaults.credentials
     };
 
+    // 配置请求路径 baseURL
+    if (defaults.baseURL && !Utils.isAbsoluteURL($$config.url)) {
+      $$config.url = Utils.combineURLs(defaults.baseURL, $$config.url);
+    }
+
     // 在这里转换请求体
     // 随便改一个东西看看
     if (config.method === 'get') {
@@ -93,8 +100,13 @@ class Easyfetch {
     } else {
       $$config.body = defaults.body;
     }
-    return fetch($$config.url, $$config).then(res => res);
+
+    // 转换相应数据
+    const transformResponse = res => {
+      const __res = Object.assign({}, res, {});
+    };
+    return fetch($$config.url, $$config);
   }
 }
 
-export default new Easyfetch();
+export default Easyfetch;

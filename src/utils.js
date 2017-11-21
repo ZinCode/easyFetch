@@ -85,7 +85,7 @@ const toJson = (obj, pretty) => {
  * @param {Object} value  序列化 
  */
 const serializeValue = value => {
-  if (isObject(value)) return isDate(value) ? value.toISOString() : toJSON(value);
+  if (isObject(value)) return isDate(value) ? value.toISOString() : toJson(value);
   return value;
 };
 
