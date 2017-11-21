@@ -1,0 +1,24 @@
+<html>
+
+<body>
+  <h1>调试界面</h1>
+</body>
+<script src="./easy-fetch.dev.js"></script>
+<script>
+var easy = new Easyfetch({
+  baseURL: 'http://urguo.com'
+})
+easy.get('/api/v1/banner/1', {
+    name: 'jsm',
+    age: 24,
+    company: '灰机科技'
+  }, {
+    mode: 'cors'
+  }).then(res => res.json())
+  .then(res => {
+    console.log(res)
+  })
+
+</script>
+
+</html>

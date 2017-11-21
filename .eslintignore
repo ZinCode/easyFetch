@@ -1,3 +1,4 @@
 otherfetch/*.js
 dist/*.js
 config/*.js
+test/*.js

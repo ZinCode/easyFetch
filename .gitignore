@@ -2,6 +2,7 @@
 node_modules/
 
 # Binaries
-test/
+test/*.js.*
+test/test.js
 dist/
 otherfetch
