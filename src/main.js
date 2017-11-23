@@ -1,5 +1,5 @@
 import Utils from './utils';
-
+import InterceptorManager from './interceptorManager';
 class Easyfetch {
   constructor(defaults = {}) {
     this.defaults = defaults;
@@ -7,8 +7,8 @@ class Easyfetch {
   }
 
   /**
-    * 初始化
-    */
+   * 初始化
+   */
   __init() {
     this.__initInterceptor();
     this.__initDefaults();
@@ -16,13 +16,35 @@ class Easyfetch {
   }
 
   /**
-    * 初始化默认拦截器
-    */
-  __initInterceptor() {}
+   * 初始化默认拦截器
+   */
+  __initInterceptor() {
+    this.interceptors = new InterceptorManager();
+    this.interceptors.use({
+      // 请求前
+      request(request) {
+        request.requestTimestamp = new Date().getTime();
+        return request;
+      },
+      // 请求失败后
+      requestError(requestError) {
+        return Promise.reject(requestError);
+      },
+      // 相应前
+      response(response) {
+        response.responseTimestamp = new Date().getTime();
+        return response;
+      },
+      // 响应失败后
+      responseError(responseError) {
+        return Promise.reject(responseError);
+      }
+    });
+  }
 
   /**
-    * 初始化默认参数
-    */
+   * 初始化默认参数
+   */
   __initDefaults() {
     const defaults = {
       // 基础请求路径
@@ -38,7 +60,7 @@ class Easyfetch {
       body: {},
 
       /* fetch专有参数 */
-      mode: 'cors',
+      mode: 'same-origin',
       catch: 'default',
       credentials: 'same-origin',
 
@@ -93,19 +115,43 @@ class Easyfetch {
       $$config.url = Utils.combineURLs(defaults.baseURL, $$config.url);
     }
 
-    // 在这里转换请求体
-    // 随便改一个东西看看
     if (config.method === 'get') {
       $$config.url = Utils.buildUrl($$config.url, defaults.body);
     } else {
       $$config.body = defaults.body;
     }
 
-    // 转换相应数据
-    const transformResponse = res => {
-      const __res = Object.assign({}, res, {});
+    // 看看Map类型能不能实现这样的方式，key和value一一对应
+    const chainInterceptors = (promise, interceptors) => {
+      for (let [thenFn, rejectFn] of interceptors) {
+        promise = promise.then(thenFn, rejectFn);
+      }
+      return promise;
     };
-    return fetch($$config.url, $$config);
+
+    // 所有请求拦截
+    let requestInterceptors = new Map();
+    // 所有响应拦截
+    let responseInterceptors = new Map();
+    let promise = Promise.resolve($$config);
+
+    // 分类缓存拦截器
+    this.interceptors.forEach(n => {
+      if (n.request || n.requestError) {
+        requestInterceptors.set(n.request, n.requestError);
+        // requestInterceptors.push(n.request, n.requestError);
+      }
+      if (n.response || n.responseError) {
+        // 这里有问题
+        responseInterceptors.set(n.response, n.responseError);
+      }
+    });
+
+    // 注入请求拦截器
+    // 下面这里buble 不支持转换set， map类型，只能转换成数组
+    promise = chainInterceptors(promise, Array.from(requestInterceptors));
+    promise = fetch($$config.url, $$config);
+    return promise;
   }
 }
 

@@ -151,6 +151,37 @@ var Utils = {
   buildUrl: buildUrl
 };
 
+var InterceptorManager = function InterceptorManager() {
+  this.handlers = [];
+};
+
+/**
+ * 添加一个拦截器
+ */
+InterceptorManager.prototype.use = function use (obj) {
+  return this.handlers.push(obj) - 1;
+};
+
+/**
+ * 移除一个拦截器
+ */
+InterceptorManager.prototype.eject = function eject (id) {
+  if (this.handlers[id]) {
+    this.handlers[id] = null;
+  }
+};
+
+/**
+ * 遍历所有已注册的拦截器
+ */
+InterceptorManager.prototype.forEach = function forEach (fn) {
+  this.handlers.forEach(function (h) {
+    if (h != null) {
+      fn(h);
+    }
+  });
+};
+
 var Easyfetch = function Easyfetch(defaults) {
   if ( defaults === void 0 ) defaults = {};
 
@@ -159,8 +190,8 @@ var Easyfetch = function Easyfetch(defaults) {
 };
 
 /**
-  * 初始化
-  */
+ * 初始化
+ */
 Easyfetch.prototype.__init = function __init () {
   this.__initInterceptor();
   this.__initDefaults();
@@ -168,13 +199,35 @@ Easyfetch.prototype.__init = function __init () {
 };
 
 /**
-  * 初始化默认拦截器
-  */
-Easyfetch.prototype.__initInterceptor = function __initInterceptor () {};
+ * 初始化默认拦截器
+ */
+Easyfetch.prototype.__initInterceptor = function __initInterceptor () {
+  this.interceptors = new InterceptorManager();
+  this.interceptors.use({
+    // 请求前
+    request: function request(request$1) {
+      request$1.requestTimestamp = new Date().getTime();
+      return request$1;
+    },
+    // 请求失败后
+    requestError: function requestError(requestError$1) {
+      return Promise.reject(requestError$1);
+    },
+    // 相应前
+    response: function response(response$1) {
+      response$1.responseTimestamp = new Date().getTime();
+      return response$1;
+    },
+    // 响应失败后
+    responseError: function responseError(responseError$1) {
+      return Promise.reject(responseError$1);
+    }
+  });
+};
 
 /**
-  * 初始化默认参数
-  */
+ * 初始化默认参数
+ */
 Easyfetch.prototype.__initDefaults = function __initDefaults () {
   var defaults = {
     // 基础请求路径
@@ -190,7 +243,7 @@ Easyfetch.prototype.__initDefaults = function __initDefaults () {
     body: {},
 
     /* fetch专有参数 */
-    mode: 'cors',
+    mode: 'same-origin',
     catch: 'default',
     credentials: 'same-origin',
 
@@ -255,16 +308,47 @@ Easyfetch.prototype.__defaultRequest = function __defaultRequest (config) {
     $$config.url = Utils.combineURLs(defaults.baseURL, $$config.url);
   }
 
-  // 在这里转换请求体
-  // 随便改一个东西看看
   if (config.method === 'get') {
     $$config.url = Utils.buildUrl($$config.url, defaults.body);
   } else {
     $$config.body = defaults.body;
   }
 
-  // 转换相应数据
-  return fetch($$config.url, $$config);
+  // 看看Map类型能不能实现这样的方式，key和value一一对应
+  var chainInterceptors = function (promise, interceptors) {
+    for (var i = 0, list = interceptors; i < list.length; i += 1) {
+      var ref = list[i];
+        var thenFn = ref[0];
+        var rejectFn = ref[1];
+
+        promise = promise.then(thenFn, rejectFn);
+    }
+    return promise;
+  };
+
+  // 所有请求拦截
+  var requestInterceptors = new Map();
+  // 所有响应拦截
+  var responseInterceptors = new Map();
+  var promise = Promise.resolve($$config);
+
+  // 分类缓存拦截器
+  this.interceptors.forEach(function (n) {
+    if (n.request || n.requestError) {
+      requestInterceptors.set(n.request, n.requestError);
+      // requestInterceptors.push(n.request, n.requestError);
+    }
+    if (n.response || n.responseError) {
+      // 这里有问题
+      responseInterceptors.set(n.response, n.responseError);
+    }
+  });
+
+  // 注入请求拦截器
+  // 下面这里buble 不支持转换set， map类型，只能转换成数组
+  promise = chainInterceptors(promise, Array.from(requestInterceptors));
+  promise = fetch($$config.url, $$config);
+  return promise;
 };
 
 return Easyfetch;
