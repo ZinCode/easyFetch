@@ -8,16 +8,38 @@
 var easy = new Easyfetch({
   baseURL: 'http://urguo.com'
 })
-easy.get('/api/v1/banner/1', {
-    name: 'jsm',
-    age: 24,
-    company: '灰机科技'
-  }, {
-    mode: 'cors'
-  }).then(res => res.json())
-  .then(res => {
-    console.log(res)
-  })
+easy.interceptors.use({
+  request(req) {
+    console.log('第1次拦截')
+    return req;
+  },
+  requestError(reqE) {
+    console.log('第1次相应失败拦截')
+    return Promise.reject(reqE)
+  }
+})
+easy.interceptors.use({
+  request(req) {
+    console.log('第2次拦截')
+    return req;
+  },
+  requestError(reqE) {
+    console.log('第2次相应失败拦截')
+    return Promise.reject(reqE)
+  }
+})
+
+var options = {
+  mode: 'cors'
+}
+
+easy.get('api/v1/banner/1', null, options).then(res => {
+  if (res.ok) {
+    return res.json()
+  }
+}).then(data => {
+  console.log(data)
+})
 
 </script>
 

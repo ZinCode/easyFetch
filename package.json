@@ -13,7 +13,11 @@
     "type": "git",
     "url": "https://github.com/ZinCode/easyFetch"
   },
-  "keywords": ["fetch", "axios", "es6"],
+  "keywords": [
+    "fetch",
+    "axios",
+    "es6"
+  ],
   "author": "jsm",
   "license": "MIT",
   "devDependencies": {
