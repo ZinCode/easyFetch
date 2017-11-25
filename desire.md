@@ -55,11 +55,11 @@ fetch('./example.json')
 2. 处理基本的 Text/Html 相应
 
 ```js
-fetch('http://example.com/page)
+fetch('http://example.com/page')
   .then(res => res.text())
   .then(data => {
     // <!DOCTYPE...
-  })
+  });
 ```
 
 3. 处理 Blob 结果（加载图像或者其他二进制数据）
@@ -79,8 +79,8 @@ fetch('butterfly.jpg')
 ```js
 fetch('/submit', {
   method: 'post',
-  body: new FormData(document.getElementById('comment-form))
-})
+  body: new FormData(document.getElementById('comment-form'))
+});
 ```
 
 5. 提交 json
