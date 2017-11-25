@@ -1,5 +1,14 @@
 <html>
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible"
+        content="ie=edge">
+  <title>Document</title>
+</head>
+
 <body>
   <h1>调试界面</h1>
 </body>
@@ -10,35 +19,42 @@ var easy = new Easyfetch({
 })
 easy.interceptors.use({
   request(req) {
-    console.log('第1次拦截')
+    console.log('第1次req拦截')
+    // if (!req.token) {
+    //   console.log('第1-token次req拦截')
+    //   return Promise.reject(req)
+    // }
     return req;
   },
   requestError(reqE) {
-    console.log('第1次相应失败拦截')
+    console.log('第1次res失败拦截')
     return Promise.reject(reqE)
   }
 })
-easy.interceptors.use({
+let interceptorId = easy.interceptors.use({
   request(req) {
-    console.log('第2次拦截')
+    console.log('第2次req拦截')
     return req;
   },
   requestError(reqE) {
-    console.log('第2次相应失败拦截')
     return Promise.reject(reqE)
   }
 })
+
+// 移除拦截器
+easy.interceptors.eject(interceptorId)
 
 var options = {
   mode: 'cors'
 }
 
-easy.get('api/v1/banner/1', null, options).then(res => {
-  if (res.ok) {
-    return res.json()
-  }
-}).then(data => {
-  console.log(data)
+easy.get('api/v1/baner/1', {
+  name: '张三',
+  age: 23
+}, options).then(res => {
+  console.log(res)
+}).catch(err => {
+
 })
 
 </script>

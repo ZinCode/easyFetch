@@ -121,8 +121,10 @@ fetch('/submit-json', {
 
 #### Promise 相关
 
-[谈谈使用 promise 时候的一些反模式](http://efe.baidu.com/blog/promises-anti-pattern/) baiduFE 的
+[谈谈使用 Promise 时候的一些反模式](http://efe.baidu.com/blog/promises-anti-pattern/) baiduFE 的
 这篇文章讲的真详细，能把你对 promise 的所有困惑都讲出来， 5 星推荐
+
+[全面介绍 Promise](https://www.kancloud.cn/kancloud/promises-book/44237)
 
 #### Axios 相关
 
