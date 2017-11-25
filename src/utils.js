@@ -23,7 +23,7 @@ const isAbsoluteURL = url => {
 
 /**
  * 判断是否是数组
- * @param {Array} value 
+ * @param {Array} value
  * @return {Boolean} true: 是数组，false: 不是数组
  */
 const isArray = value => {
@@ -32,7 +32,7 @@ const isArray = value => {
 
 /**
  * 判断是否是对象
- * @param {Object} value 
+ * @param {Object} value
  * @return {Boolean} true: 是对象, false: 不是对象
  */
 const isObject = value => {
@@ -41,7 +41,7 @@ const isObject = value => {
 
 /**
  * 判断是否是数字
- * @param {Number} value 
+ * @param {Number} value
  * @return {Boolean} true: 是数字， false: 不是数字
  */
 const isNumber = value => {
@@ -50,7 +50,7 @@ const isNumber = value => {
 
 /**
  * 判断是否是时间
- * @param {Date} value 
+ * @param {Date} value
  * @return {Boolean} true: 是时间， false: 不是时间
  */
 const isDate = value => {
@@ -59,7 +59,7 @@ const isDate = value => {
 
 /**
  * 判断是否是未定义
- * @param {Undefined} value 
+ * @param {Undefined} value
  * @return {Boolean} true: 是， false: 不是
  */
 const isUndefined = value => {
@@ -82,7 +82,7 @@ const toJson = (obj, pretty) => {
 
 /**
  * 序列化
- * @param {Object} value  序列化 
+ * @param {Object} value  序列化
  */
 const serializeValue = value => {
   if (isObject(value)) return isDate(value) ? value.toISOString() : toJson(value);

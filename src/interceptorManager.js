@@ -1,6 +1,26 @@
 class InterceptorManager {
   constructor() {
     this.handlers = [];
+
+    // 使用默认拦截器
+    this.use({
+      // 请求前
+      request(request) {
+        return request;
+      },
+      // 请求失败后
+      requestError(requestError) {
+        return Promise.reject(requestError);
+      },
+      // 相应前
+      response(response) {
+        return response;
+      },
+      // 响应失败后
+      responseError(responseError) {
+        return Promise.reject(responseError);
+      }
+    });
   }
 
   /**
